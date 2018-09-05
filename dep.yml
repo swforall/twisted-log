@@ -1,0 +1,42 @@
+# dep.yml
+# ansible deployment yml file
+
+- hosts: client
+  remote_user: nayden
+  tasks:
+    - name: Install pip packages
+      pip:
+        name:
+        - twisted
+        - psutil
+        executable: pip3
+    - name: Create dir
+      file:
+        path: ~/twisted_ypsilon/
+        state: directory
+    - name: Deploy source code
+      unarchive:
+        src: ~/projects/twisted_ypsilon/client.tar
+        dest: ~/twisted_ypsilon/
+
+- hosts: log_server
+  remote_user: nayden
+  tasks:
+    - name: Install apt packages
+      become: yes
+      apt:
+        name:
+        - sqlite
+        - sqlitebrowser
+    - name: Install pip packages
+      pip:
+        name: twisted
+        executable: pip3
+    - name: Create dir
+      file:
+        path: ~/twisted_ypsilon/
+        state: directory
+    - name: Deploy source code
+      unarchive:
+        src: ~/projects/twisted_ypsilon/server.tar
+        dest: ~/twisted_ypsilon/
